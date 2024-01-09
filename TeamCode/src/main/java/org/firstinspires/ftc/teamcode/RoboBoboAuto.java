@@ -35,7 +35,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 @Autonomous(name="RoboBobo", group="Robot")
@@ -45,21 +48,19 @@ public class RoboBoboAuto extends LinearOpMode {
 
     private int step=1;
 
-    private DcMotor topLeft;
-    private DcMotor topRight;
-    private DcMotor bottomLeft;
-    private DcMotor bottomRight;
+    private DcMotor topLeft,topRight,bottomLeft,bottomRight;
 
-    private double topLeftCount;
-    private double topRightCount;
-    private double bottomLeftCount;
-    private double bottomRightCount;
+    private double topLeftCount,topRightCount,bottomLeftCount,bottomRightCount;
 
 
     private final double ppr=537.7;
     private final double     dgr    = 1.0 ;     // No External Gearing.
     private final double     wd   = 3.77953 ;     // For figuring circumference
     private final double     tpi         = (ppr * dgr)/(wd * Math.PI);
+
+    boolean left,right,center;
+
+    private DistanceSensor distanceSensor = null;
 
     @Override
     public void runOpMode() {
@@ -68,6 +69,8 @@ public class RoboBoboAuto extends LinearOpMode {
         topRight=hardwareMap.get(DcMotor.class,"topRight");
         bottomLeft=hardwareMap.get(DcMotor.class,"bottomLeft");
         bottomRight=hardwareMap.get(DcMotor.class,"bottomRight");
+
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         
 
         topLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -79,6 +82,7 @@ public class RoboBoboAuto extends LinearOpMode {
         topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bottomLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bottomRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //set position of wanted inches
 
@@ -86,14 +90,6 @@ public class RoboBoboAuto extends LinearOpMode {
         topRight.setDirection(DcMotorSimple.Direction.FORWARD);
         bottomLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bottomRight.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        
-
-        topLeft.setTargetPosition((int)(29*tpi));
-        topRight.setTargetPosition((int)(29*tpi));
-        bottomLeft.setTargetPosition((int)(29*tpi));
-        bottomRight.setTargetPosition((int)(29*tpi));
-
 
 
         telemetry.addData("Status", "Initialized");
@@ -111,6 +107,32 @@ public class RoboBoboAuto extends LinearOpMode {
         bottomLeft.setPower(dashboardData.drivePower);
         bottomRight.setPower(dashboardData.drivePower);
 
+
+        if(distanceSensor.getDistance(DistanceUnit.INCH)>=5) {
+            topLeft.setTargetPosition((int) (29 * tpi));
+            topRight.setTargetPosition((int) (29 * tpi));
+            bottomLeft.setTargetPosition((int) (29 * tpi));
+            bottomRight.setTargetPosition((int) (29 * tpi));
+
+            left=false;
+            center=true;
+            right=false;
+        }
+        else{
+
+            topLeft.setPower(dashboardData.drivePower);
+            topRight.setPower(-dashboardData.drivePower);
+            bottomLeft.setPower(-dashboardData.drivePower);
+            bottomRight.setPower(dashboardData.drivePower);
+
+            topLeft.setTargetPosition((int) (6 * tpi));
+            topRight.setTargetPosition((int) (6 * tpi));
+            bottomLeft.setTargetPosition((int) (6 * tpi));
+            bottomRight.setTargetPosition((int) (6 * tpi));
+
+            center=false;
+        }
+
         topLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         topRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         bottomLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -127,24 +149,38 @@ public class RoboBoboAuto extends LinearOpMode {
 
                 if (!topLeft.isBusy()) {
                     //keep moving robot until 4 revolutions
-                    step = 726;
-                    //
+                    step = 2;
 
-//                    topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                    topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                    bottomLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                    bottomRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
-//
-//                    topLeft.setTargetPosition(-(int)(17.28*tpi));
-//                    topRight.setTargetPosition((int)(17.28*tpi));
-//                    bottomLeft.setTargetPosition(-(int)(17.28*tpi));
-//                    bottomRight.setTargetPosition((int)(17.28*tpi));
-//
-//                    topLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                    topRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                    bottomLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                    bottomRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bottomLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bottomRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+                    if(center==false){
+                        if(distanceSensor.getDistance(DistanceUnit.INCH)>=5) {
+                            left=false;
+                            right=true;
+
+                        }
+                        else{
+                            left=true;
+                            right=false;
+
+                        }
+
+                    }
+
+                    topLeft.setTargetPosition(-(int)(17.28*tpi));
+                    topRight.setTargetPosition((int)(17.28*tpi));
+                    bottomLeft.setTargetPosition(-(int)(17.28*tpi));
+                    bottomRight.setTargetPosition((int)(17.28*tpi));
+
+                    topLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    topRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    bottomLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    bottomRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
             }
             else if(step==2){

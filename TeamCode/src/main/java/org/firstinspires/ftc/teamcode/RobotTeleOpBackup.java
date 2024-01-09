@@ -36,11 +36,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoController;
 
 
-@TeleOp(name="RobotTeleOp", group="Linear Opmode")
-public class RobotTeleOp extends LinearOpMode {
+@TeleOp(name="RobotTeleOpBackup", group="Linear Opmode")
+public class RobotTeleOpBackup extends LinearOpMode {
     private FtcDashboard dashboard;
 
     // declare OpMode members

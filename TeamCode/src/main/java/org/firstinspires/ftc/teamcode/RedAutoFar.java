@@ -31,9 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -42,8 +40,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * Template auto mode with no functionality
  */
 
-@Autonomous(name="OfficialAuto", group="Robot")
-public class RobotAutoNoMous extends LinearOpMode {
+@Autonomous(name="RedAutoFar", group="Robot")
+public class RedAutoFar extends LinearOpMode {
 
     // setup dashboard
     // http://192.168.43.1:8080/dash
@@ -105,15 +103,11 @@ public class RobotAutoNoMous extends LinearOpMode {
 
         //set position of wanted inches
 
-//        topLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-//        topRight.setDirection(DcMotorSimple.Direction.FORWARD);
-//        bottomLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-//        bottomRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        topLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        topRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        bottomLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        bottomRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        topLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        topRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        bottomLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        bottomRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //spits out by default
         intakeMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -174,12 +168,11 @@ public class RobotAutoNoMous extends LinearOpMode {
                     }
                 }
                 if (step == 2) {
-                    //if (topLeft.getCurrentPosition() < 30*tpi) {
                     if (topLeft.getCurrentPosition() < 84 * tpi) {
                         //keep moving robot until 4 revolutions
-                        topLeft.setPower(0.1);
+                        topLeft.setPower(0.105);
                         topRight.setPower(0.1);
-                        bottomLeft.setPower(0.1);
+                        bottomLeft.setPower(0.105);
                         bottomRight.setPower(0.1);
                     } else {
                         step = 3;
@@ -204,8 +197,8 @@ public class RobotAutoNoMous extends LinearOpMode {
                 if (step == 3) {
                     //3 seconds
                     if ((System.nanoTime() - spitTime) / 1000000000 < 2) {
-                        intakeMotor1.setPower(1.0);
-                        intakeMotor2.setPower(0.2);
+                        intakeMotor1.setPower(0.4);
+                        intakeMotor2.setPower(1.0);
                     } else {
                         step = 4;
 

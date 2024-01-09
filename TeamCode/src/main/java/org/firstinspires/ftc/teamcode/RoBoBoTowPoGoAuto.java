@@ -109,8 +109,8 @@ public class RoBoBoTowPoGoAuto extends LinearOpMode {
       bottomLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       bottomRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-      topLeft.setPower(dashboardData.drivePower);
-//      topRight.setPower(dashboardData.drivePower);
+      //topLeft.setPower(dashboardData.drivePower);
+      topRight.setPower(dashboardData.drivePower);
 //      bottomLeft.setPower(dashboardData.drivePower);
 //      bottomRight.setPower(dashboardData.drivePower);
 
@@ -127,7 +127,7 @@ public class RoBoBoTowPoGoAuto extends LinearOpMode {
          telemetry.addData("topLeft: ", topLeft.getCurrentPosition());
          telemetry.addData("topRight: ", topRight.getCurrentPosition());
          telemetry.addData("bottomLeft: ", bottomLeft.getCurrentPosition());
-         telemetry.addData("bottomRightt: ", bottomRight.getCurrentPosition());
+         telemetry.addData("bottomRight: ", bottomRight.getCurrentPosition());
          telemetry.update();
 
       }
