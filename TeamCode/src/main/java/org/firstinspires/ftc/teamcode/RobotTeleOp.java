@@ -51,8 +51,7 @@ public class RobotTeleOp extends LinearOpMode {
     private DcMotor         bottomRight           = null; //port 1 - expansion hub
 
     // intake
-    private DcMotor         intakeMotor1        = null;   //port 2 - control hub
-    private DcMotor         intakeMotor2        = null;   //port 3 - expansion hub
+    private DcMotor         intakeMotor          = null;   //port 2 - control hub
 
     // arm
     private DcMotor         armMotor            = null;   //port 2 - expansion hub
@@ -62,9 +61,8 @@ public class RobotTeleOp extends LinearOpMode {
     private Servo           dlServo           = null;     //port 0 - control hub
 
     // power for intake (can be changed later)
-//   private double          intakePower         = dashboardData.intakeP;
-    private double          intakePower1         = 0.7;
-    private double          intakePower2         = 0.7;
+//   private double          intakePower         = dashboardData.intakePower
+    private double          intakePower        = 0.7;
 
     private boolean dlTog=true;
 
@@ -105,8 +103,7 @@ public class RobotTeleOp extends LinearOpMode {
         bottomRight       = hardwareMap.get(DcMotor.class, "bottomRight");
 
         // init intake motors
-        intakeMotor1    = hardwareMap.get(DcMotor.class, "intakeMotor1");
-        intakeMotor2    = hardwareMap.get(DcMotor.class, "intakeMotor2");
+        intakeMotor     = hardwareMap.get(DcMotor.class, "intakeMotor");
 
 
         // init arm motor
@@ -128,8 +125,7 @@ public class RobotTeleOp extends LinearOpMode {
 
         // TODO: may have to flip these
         //inputs by default
-        intakeMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //reset encoder position
 
@@ -155,7 +151,6 @@ public class RobotTeleOp extends LinearOpMode {
             float ry    = -gamepad1.right_stick_y;
 
             // read current value of right bumper
-            boolean rBumper = gamepad1.right_bumper;
             boolean lBumper = gamepad1.left_bumper;
 
             //trigger readings
@@ -196,7 +191,7 @@ public class RobotTeleOp extends LinearOpMode {
             double dtPower = 1.0;
 
 
-            if(lTrigger>=0.05){
+            if(lBumper){
                 dtPower = 1.0;
             }
 
@@ -212,21 +207,23 @@ public class RobotTeleOp extends LinearOpMode {
 
 
             /* DO INTAKE STUFF */
-            if (rBumper) {
-                intakeMotor2.setPower(intakePower2);
+            if (lTrigger>=0.05) {
+                intakeMotor.setPower(intakePower);
+                intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
             else {
-                intakeMotor2.setPower(0);
+                intakeMotor.setPower(0);
             }
             if(rTrigger>=0.05){
-                intakeMotor1.setPower(intakePower1);
+                intakeMotor.setPower(intakePower);
+                intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             }
             else{
-                intakeMotor1.setPower(0);
+                intakeMotor.setPower(0);
             }
-            if (lBumper) {
+           // if (lBumper) {
                 //only lets the code below run once
-                if(dirToggle) {
+                /*if(dirToggle) {
                     //swaps the direction of the motors, therefore reversing the direction
                     if(intakeMotor1.getDirection()==DcMotorSimple.Direction.FORWARD){
                         intakeMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -244,7 +241,7 @@ public class RobotTeleOp extends LinearOpMode {
 
                 //when button is released, let new button presses be registered
                 dirToggle=true;
-            }
+            } */
             if(a2){
                 if(clawToggle) {
                     if(clawServo.getPosition()==0||clawServo.getPosition()==-1) {
@@ -397,8 +394,7 @@ public class RobotTeleOp extends LinearOpMode {
         bottomLeft.setPower(0.0);
         bottomRight.setPower(0.0);
         armMotor.setPower(0.0);
-        intakeMotor1.setPower(0.0);
-        intakeMotor2.setPower(0.0);
+        intakeMotor.setPower(0.0);
     }
 }
 
