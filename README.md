@@ -1,3 +1,49 @@
+Team 21874 DRSS Discovery FTC Robotics
+=
+
+### Introduction
+Welcome to the README for FTC Robotics Team 21874 DRSS Discovery! This document provides an overview of our robotics team, including information about our goals, members, and projects. If you're new to our team or interested in learning more about us, you're in the right place.
+
+### About Us
+FTC Team 21874 DRSS Discovery is a passionate group of students dedicated to exploring the world of robotics through the FIRST Tech Challenge (FTC). Our team is based in The [Dayton Regional STEM School] We are the Junior team in relation to the more advanced one, 4537 DRSS Enterprise.
+
+### Team Members
+Meet the talented individuals who make up Team 21874 DRSS Discovery:
+
+[Member 1]
+[Member 2]
+[Member 3]
+[Member 4]
+[Member 5]
+### Our Mission
+Our mission is to foster a love for STEM (Science, Technology, Engineering, and Mathematics) fields and robotics among our team members and community. We aim to not only compete successfully in FTC events but also to learn and grow as individuals and as a team, using the FIRST Core Values.
+
+### Projects
+#### Current Project: [Miami Competition]
+Describe the current project the team is working on. Include details such as the project's goals, challenges faced, and progress made. This section can be updated regularly to reflect the team's latest activities.
+
+### Previous Projects
+Highlight some of the notable projects the team has undertaken in the past. Include project names, descriptions, and any awards or recognition received.
+
+### How to Get Involved
+If you're interested in joining Team 21874 DRSS Discovery or supporting our efforts, please contact us. We welcome students, mentors, and sponsors who share our enthusiasm for robotics and STEM education.
+
+### Connect With Us
+Stay updated on our team's activities by following us on social media:
+
+#### Twitter
+#### Instagram
+#### Facebook
+### License
+This README and associated documentation are licensed under the MIT License.
+
+<br><br><br>
+The section below is the default info provided by the FTC Robot Controller.
+
+***
+
+
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the CENTERSTAGE (2023-2024) competition season.
