@@ -29,25 +29,72 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.stream.DoubleStream;
 
 
 @TeleOp(name="distanceBoy", group="Linear Opmode")
 public class distanceBoy extends LinearOpMode {
+
+    private FtcDashboard dashboard;
+
+    // init dashboard and create a new multiple telemetry instance
 
     // declare OpMode members
 
 
     // dawinching
     private DistanceSensor distanceSensor = null;
+    // setup dashboard
+    // http://192.168.43.1:8080/dash
+    double hitList[]=new double[10];
 
+
+    public boolean hitDetector(double list[]){
+        double sum=0;
+
+
+        for(int x=0;x<list.length;x+=1) {
+
+            sum+=list[x];
+        }
+
+        double average=sum/list.length;
+        double stdev=0;
+
+        for(int x=0;x<list.length;x+=1) {
+            stdev+=Math.pow(list[x]-average,2);
+        }
+
+        stdev=Math.sqrt(stdev/list.length);
+
+        if(stdev<=1&&average>=315){
+            return false;
+        }
+        else if(stdev>=20&&average>=100){
+            return false;
+        }
+        else if(stdev>=50){
+            return false;
+        }
+        else{
+            return true;
+        }
+
+
+    }
 
     @Override
     public void runOpMode() {
+
+        dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
@@ -64,7 +111,13 @@ public class distanceBoy extends LinearOpMode {
         while (opModeIsActive()) {
             /* READ INPUTS */
             // read current values of joystick
-            telemetry.addData("Distance: ",distanceSensor.getDistance(DistanceUnit.INCH));
+            for(int x=0;x<hitList.length;x+=1) {
+                hitList[x]=distanceSensor.getDistance(DistanceUnit.INCH);
+                telemetry.addData("Distance: ",hitList[x]);
+            }
+
+
+            telemetry.addData("OBJECT DETECTED: ", hitDetector(hitList));
             telemetry.update();
 
         }

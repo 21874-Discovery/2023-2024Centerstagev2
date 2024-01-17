@@ -52,8 +52,7 @@ public class RedAutoClose extends LinearOpMode {
     private DcMotor bottomLeft;
     private DcMotor bottomRight;
 
-    private DcMotor         intakeMotor1        = null;   //port 2 - control hub
-    private DcMotor         intakeMotor2        = null;
+    private DcMotor         intakeMotor        = null;   //port 2 - control hub
 
 
     private int step=1;
@@ -82,8 +81,7 @@ public class RedAutoClose extends LinearOpMode {
         bottomRight=hardwareMap.get(DcMotor.class,"bottomRight");
 
 
-        intakeMotor1    = hardwareMap.get(DcMotor.class, "intakeMotor1");
-        intakeMotor2    = hardwareMap.get(DcMotor.class, "intakeMotor2");
+        intakeMotor    = hardwareMap.get(DcMotor.class, "intakeMotor");
 
 
 
@@ -110,8 +108,7 @@ public class RedAutoClose extends LinearOpMode {
 
 
         //spits out by default
-        intakeMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         topLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         topRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -197,13 +194,11 @@ public class RedAutoClose extends LinearOpMode {
                 if (step == 3) {
                     //3 seconds
                     if ((System.nanoTime() - spitTime) / 1000000000 < 2) {
-                        intakeMotor1.setPower(0.4);
-                        intakeMotor2.setPower(1.0);
+                        intakeMotor.setPower(0.4);
                     } else {
                         step = 4;
 
-                        intakeMotor1.setPower(0.0);
-                        intakeMotor2.setPower(0.0);
+                        intakeMotor.setPower(0.0);
                     }
                 }
 
@@ -218,7 +213,6 @@ public class RedAutoClose extends LinearOpMode {
         topRight.setPower(0);
         bottomLeft.setPower(0);
         bottomRight.setPower(0);
-        intakeMotor1.setPower(0);
-        intakeMotor2.setPower(0);
+        intakeMotor.setPower(0);
     }
 }

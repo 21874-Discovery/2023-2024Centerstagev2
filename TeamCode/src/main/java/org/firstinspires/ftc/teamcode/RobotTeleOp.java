@@ -54,7 +54,8 @@ public class RobotTeleOp extends LinearOpMode {
     private DcMotor         intakeMotor          = null;   //port 2 - control hub
 
     // arm
-    private DcMotor         armMotor            = null;   //port 2 - expansion hub
+    private DcMotor         armLeft            = null;
+    private DcMotor         armRight            = null;//port 2 - expansion hub
 
     private Servo           clawServo           = null;   //port 0 - expansion  hub
 
@@ -62,7 +63,7 @@ public class RobotTeleOp extends LinearOpMode {
 
     // power for intake (can be changed later)
 //   private double          intakePower         = dashboardData.intakePower
-    private double          intakePower        = 0.7;
+    private double          intakePower        = 1;
 
     private boolean dlTog=true;
 
@@ -93,7 +94,7 @@ public class RobotTeleOp extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
 
-        telemetry.addData("Status", "newest INIT 12/13/23");
+        telemetry.addData("Status", "newest INIT 1/13/23");
         telemetry.update();
 
         // init the drive system variables
@@ -107,7 +108,8 @@ public class RobotTeleOp extends LinearOpMode {
 
 
         // init arm motor
-        armMotor        = hardwareMap.get(DcMotor.class, "armMotor");
+        armLeft        = hardwareMap.get(DcMotor.class, "armLeft");
+        armRight        = hardwareMap.get(DcMotor.class, "armRight");
 
         // init servo
         clawServo       = hardwareMap.get(Servo.class, "clawServo");
@@ -127,12 +129,20 @@ public class RobotTeleOp extends LinearOpMode {
         //inputs by default
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //reset encoder position
+        armLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //reset encoder position
 
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        armMotor.setTargetPosition(0);
+        armLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        armLeft.setTargetPosition(0);
+
+
+        armRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //reset encoder position
+
+        armRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        armRight.setTargetPosition(0);
 
         //set default position of servo as 0
         clawServo.setPosition(0);
@@ -167,6 +177,8 @@ public class RobotTeleOp extends LinearOpMode {
             boolean a2 = gamepad2.a;
             boolean b2 = gamepad2.b;
             boolean y2 = gamepad2.y;
+
+            boolean bump2 = gamepad2.left_bumper&&gamepad2.right_bumper;
 
 
 
@@ -309,20 +321,40 @@ public class RobotTeleOp extends LinearOpMode {
 
             //Felix, Max and John's Arm code
             // if no joystick, hold position
-             if(Math.abs(r2y)<=0.05){
-                if(justStopped) {
-                   armMotor.setTargetPosition(armMotor.getCurrentPosition());
-                   armMotor.setPower(1.0);
-                   justStopped=false;
-                }
-                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-             }
-             else {
-                justStopped=true;
-                armMotor.setPower(r2y);
-                armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-             }
+            if(bump2){
+                armLeft.setPower(-r2y);
+                armLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                armRight.setPower(-r2y);
+                armRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            else{
+                /*if(Math.abs(r2y)<=0.05){
+                    if(justStopped) {
+                        armLeft.setTargetPosition(armLeft.getCurrentPosition());
+                        armLeft.setPower(1.0);
+
+                        armRight.setTargetPosition(armRight.getCurrentPosition());
+                        armRight.setPower(1.0);
+                        justStopped=false;
+                    }
+                    armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                }
+                else {
+                    justStopped=true;
+                    armLeft.setPower(r2y*2/3);
+                    armLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                    armRight.setPower(r2y*2/3);
+                    armRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }*/
+                armLeft.setPower(r2y*1/3);
+                armRight.setPower(r2y*1/3);
+            }
+
 
              // if joystick, then command the motor proportionally with the input
              /*if (Math.abs(r2y) < Math.abs(prevArm)) { //take ABS of r2y??? 12/30/2023
@@ -377,11 +409,8 @@ public class RobotTeleOp extends LinearOpMode {
          telemetry.addData("fr: ", fr);
          //wrote "New" so we can know if it's the newest version
          telemetry.addData("br: New", br);*/
-        telemetry.addData("Current Power 👍", armMotor.getPower());
+        telemetry.addData("Current Power NEWEST CODE 1/13/24👍", armLeft);
         telemetry.addData("Current Y 👍", r2y);
-        telemetry.addData("Current Position 👍", armMotor.getCurrentPosition());
-        telemetry.addData("Current Target 👍", armMotor.getTargetPosition());
-        telemetry.addData("Current Previous POWER NEWEST 👎", armMotor.isBusy());
         telemetry.update();
             // TODO: print time the loop took to execute
 
@@ -393,7 +422,8 @@ public class RobotTeleOp extends LinearOpMode {
         topRight.setPower(0.0);
         bottomLeft.setPower(0.0);
         bottomRight.setPower(0.0);
-        armMotor.setPower(0.0);
+        armLeft.setPower(0.0);
+        armRight.setPower(0.0);
         intakeMotor.setPower(0.0);
     }
 }

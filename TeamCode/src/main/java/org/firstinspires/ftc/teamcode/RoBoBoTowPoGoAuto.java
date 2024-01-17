@@ -35,7 +35,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 @Autonomous(name="random auto", group="Robot")
@@ -49,13 +52,137 @@ public class RoBoBoTowPoGoAuto extends LinearOpMode {
    private DcMotor bottomLeft;
    private DcMotor bottomRight;
 
+   private DcMotor intakeMotor;
 
+   private DistanceSensor distanceSensor;
+
+   int step=1;
+   boolean toggle=false;
 
 
    private final double ppr=537.7;
    private final double     dgr    = 1.0 ;     // No External Gearing.
    private final double     wd   = 3.77953 ;     // For figuring circumference
    private final double     tpi         = (ppr * dgr)/(wd * Math.PI);
+
+   private enum Direction{FORWARD,RIGHT,BACKWARD,LEFT,CW,CCW};
+
+
+   public boolean distanceCalc(double list[]){
+      double sum=0;
+
+      //get the sum
+      for(int x=0;x<list.length;x+=1) {
+
+         sum+=list[x];
+      }
+
+      //get the average
+      double average=sum/list.length;
+      double stdev=0;
+
+      //standard deviation step 3
+      for(int x=0;x<list.length;x+=1) {
+         stdev+=Math.pow(list[x]-average,2);
+      }
+
+      //divide and square root
+      stdev=Math.sqrt(stdev/list.length);
+
+      //if average larger than 315, not detecting
+      if(stdev<=1&&average>=315){
+         return false;
+      }
+
+        /*
+        if standard deviation is larger than 20, so dataset very spread apart,
+        then nothing is detected
+         */
+      else if(stdev>=20&&average>=100){
+         return false;
+      }
+      else if(stdev>=50){
+         return false;
+      }
+      else{
+         return true;
+      }
+
+
+   }
+
+   public boolean distanceDetector(){
+      double list[]=new double[10];
+
+      for(int x=0;x<list.length;x+=1) {
+         list[x]=distanceSensor.getDistance(DistanceUnit.INCH);
+      }
+      return distanceCalc(list);
+   }
+   
+   
+   public void drive(Direction dir,double distance,double power){
+
+      topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      bottomLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      bottomRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+      topLeft.setPower(power);
+      topRight.setPower(power);
+      bottomLeft.setPower(power);
+      bottomRight.setPower(power);
+
+
+      switch(dir) {
+         case FORWARD:
+            topLeft.setTargetPosition((int) (distance * tpi));
+            topRight.setTargetPosition((int) (distance * tpi));
+            bottomLeft.setTargetPosition((int) (distance * tpi));
+            bottomRight.setTargetPosition((int) (distance * tpi));
+         case RIGHT:
+            topLeft.setTargetPosition((int) (distance * tpi));
+            topRight.setTargetPosition(-(int) (distance * tpi));
+            bottomLeft.setTargetPosition(-(int) (distance * tpi));
+            bottomRight.setTargetPosition((int) (distance * tpi));
+         case BACKWARD:
+            topLeft.setTargetPosition(-(int) (distance * tpi));
+            topRight.setTargetPosition(-(int) (distance * tpi));
+            bottomLeft.setTargetPosition(-(int) (distance * tpi));
+            bottomRight.setTargetPosition(-(int) (distance * tpi));
+         case LEFT:
+            topLeft.setTargetPosition(-(int) (distance * tpi));
+            topRight.setTargetPosition((int) (distance * tpi));
+            bottomLeft.setTargetPosition((int) (distance * tpi));
+            bottomRight.setTargetPosition(-(int) (distance * tpi));
+         case CW:
+            topLeft.setTargetPosition((int) (distance * tpi));
+            topRight.setTargetPosition(-(int) (distance * tpi));
+            bottomLeft.setTargetPosition((int) (distance * tpi));
+            bottomRight.setTargetPosition(-(int) (distance * tpi));
+         case CCW:
+            topLeft.setTargetPosition(-(int) (distance * tpi));
+            topRight.setTargetPosition((int) (distance * tpi));
+            bottomLeft.setTargetPosition(-(int) (distance * tpi));
+            bottomRight.setTargetPosition((int) (distance * tpi));
+      }
+      
+      topLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      topRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      bottomLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      bottomRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+   }
+   
+   public boolean isDriving(){
+      return isDriving()||topRight.isBusy()||bottomLeft.isBusy()||bottomRight.isBusy();
+   }
+
+   public void outTake(){
+      intakeMotor.setPower(0.1);
+      sleep(1500);
+      intakeMotor.setPower(0);
+   }
+
 
    @Override
    public void runOpMode() {
@@ -64,16 +191,15 @@ public class RoBoBoTowPoGoAuto extends LinearOpMode {
       topRight=hardwareMap.get(DcMotor.class,"topRight");
       bottomLeft=hardwareMap.get(DcMotor.class,"bottomLeft");
       bottomRight=hardwareMap.get(DcMotor.class,"bottomRight");
+      
+      intakeMotor=hardwareMap.get(DcMotor.class,"intakeMotor");
+
+      distanceSensor=hardwareMap.get(DistanceSensor.class,"distanceSensor");
 
 
       //zero power behav
 
       //set position of wanted inches
-
-      topLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-      topRight.setDirection(DcMotorSimple.Direction.FORWARD);
-      bottomLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-      bottomRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
 
@@ -83,8 +209,17 @@ public class RoBoBoTowPoGoAuto extends LinearOpMode {
       bottomRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
+      topLeft.setDirection(DcMotor.Direction.FORWARD);
+      topRight.setDirection(DcMotor.Direction.REVERSE);
+      bottomLeft.setDirection(DcMotor.Direction.FORWARD);
+      bottomRight.setDirection(DcMotor.Direction.REVERSE);
 
+      intakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
+      topLeft.setPower(0.1);
+      topRight.setPower(0.1);
+      bottomLeft.setPower(0.1);
+      bottomRight.setPower(0.1);
 
 
       telemetry.addData("Status", "Initialized");
@@ -98,36 +233,102 @@ public class RoBoBoTowPoGoAuto extends LinearOpMode {
       waitForStart();
 
 
-      topLeft.setTargetPosition((int)(2900*tpi));
-      topRight.setTargetPosition((int)(2900*tpi));
-      bottomLeft.setTargetPosition((int)(2900*tpi));
-      bottomRight.setTargetPosition((int)(2900*tpi));
-
-
-      topLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      topRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      bottomLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      bottomRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-      //topLeft.setPower(dashboardData.drivePower);
-      topRight.setPower(dashboardData.drivePower);
-//      bottomLeft.setPower(dashboardData.drivePower);
-//      bottomRight.setPower(dashboardData.drivePower);
-
-
 
       // run until the end of the match (driver presses STOP)
 
-      while (topLeft.isBusy()) {
+      while (opModeIsActive()) {
          /* READ INPUTS */
          // read current values of joystick
 
+         //STEP 1: DRIVE FORWARD
+         if(step==1){
+            if(distanceDetector()){
+               step=4;
+            }
+            else{
+               step=2;
+            }
+            //TODO: Figure out this logic. Maybe add a while opModeIsActive && topLeft.isBusy??
+         }
+         
+         
+         else if(step==2){
+            drive(Direction.RIGHT,12,0.1);
+            step=3;
+         }
+         
+         else if(step==3){
+            if(distanceDetector()){
+               step=5;
+            }
+            else{
+               if(!isDriving()){
+                  step=6;
+               }
+            }
+         }
+
+         else if(step==4){
+            drive(Direction.FORWARD,30,0.1);
+            step=9;
+         }
+         
+         else if(step==5){
+            drive(Direction.FORWARD,20,0.1);
+            step=9;
+         }
+
+         else if(step==6){
+            drive(Direction.FORWARD, 32, 0.1);
+            step=7;
+         }
+
+         else if(step==7){
+            if(!isDriving()) {
+               drive(Direction.CW, 17.28, 0.1);
+               step=8;
+            }
+         }
+
+         else if(step==8){
+            if(!isDriving()) {
+               drive(Direction.BACKWARD, 16, 0.1);
+               step=10;
+            }
+         }
 
 
-         telemetry.addData("topLeft: ", topLeft.getCurrentPosition());
-         telemetry.addData("topRight: ", topRight.getCurrentPosition());
-         telemetry.addData("bottomLeft: ", bottomLeft.getCurrentPosition());
-         telemetry.addData("bottomRight: ", bottomRight.getCurrentPosition());
+         else if(step==9){
+            if(!isDriving()){
+               drive(Direction.CW,34.56,0.1);
+               step=10;
+            }
+         }
+
+
+         else if(step==10){
+            if(!isDriving()){
+               outTake();
+            }
+         }
+
+
+         else {
+            topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            bottomLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            bottomRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         }
+
+
+
+
+         telemetry.addData("topLeft: ", topLeft.getDirection());
+         telemetry.addData("topRight: ", topRight.getDirection());
+         telemetry.addData("bottomLeft: ", bottomLeft.getDirection());
+         telemetry.addData("bottomRight: ", bottomRight.getDirection());
+         telemetry.addData("step: ", step);
+         telemetry.addData("detecting: ", distanceDetector());
          telemetry.update();
 
       }
@@ -135,5 +336,9 @@ public class RoBoBoTowPoGoAuto extends LinearOpMode {
       topRight.setPower(0.0);
       bottomLeft.setPower(0.0);
       bottomRight.setPower(0.0);
+      intakeMotor.setPower(0.0);
    }
+
+
 }
+
