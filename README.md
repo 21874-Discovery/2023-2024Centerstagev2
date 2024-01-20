@@ -8,19 +8,25 @@ Welcome to the README for FTC Robotics Team 21874 DRSS Discovery! This document 
 FTC Team 21874 DRSS Discovery is a passionate group of students dedicated to exploring the world of robotics through the FIRST Tech Challenge (FTC). Our team is based in The [Dayton Regional STEM School] We are the Junior team in relation to the more advanced one, 4537 DRSS Enterprise.
 
 ### Team Members
-Meet the talented individuals who make up Team 21874 DRSS Discovery:
+Meet the individuals who make up Team 21874 DRSS Discovery:
 
-[Member 1]
-[Member 2]
-[Member 3]
-[Member 4]
-[Member 5]
+[Addy Lange]
+[Braylon Smith]
+[Felix Sun]
+[Maxwell Breehne]
+[Sophia Breehne]
+[Brett Layton]
+[Juliet Axthelm]
+[Joey Hall]
+[Andrew Czupik]
+[Xavier Schrock]
 ### Our Mission
 Our mission is to foster a love for STEM (Science, Technology, Engineering, and Mathematics) fields and robotics among our team members and community. We aim to not only compete successfully in FTC events but also to learn and grow as individuals and as a team, using the FIRST Core Values.
 
 ### Projects
 #### Current Project: [Miami Competition]
 Describe the current project the team is working on. Include details such as the project's goals, challenges faced, and progress made. This section can be updated regularly to reflect the team's latest activities.
+Our next competition is the Miami Competition, taking place on 2/3/2024. This is our best chance to go to state, as we most likely need to place 11th or higher, as we've done in the past. 
 
 ### Previous Projects
 Highlight some of the notable projects the team has undertaken in the past. Include project names, descriptions, and any awards or recognition received.
