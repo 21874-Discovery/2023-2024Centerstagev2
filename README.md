@@ -10,16 +10,16 @@ FTC Team 21874 DRSS Discovery is a passionate group of students dedicated to exp
 ### Team Members
 Meet the individuals who make up Team 21874 DRSS Discovery:
 
-[Addy Lange]
-[Braylon Smith]
-[Felix Sun]
-[Maxwell Breehne]
-[Sophia Breehne]
-[Brett Layton]
-[Juliet Axthelm]
-[Joey Hall]
-[Andrew Czupik]
-[Xavier Schrock]
+Addy Lange
+Braylon Smith
+Felix Sun
+Maxwell Breehne
+Sophia Breehne
+Brett Layton
+Juliet Axthelm
+Joey Hall
+Andrew Czupik
+Xavier Schrock
 ### Our Mission
 Our mission is to foster a love for STEM (Science, Technology, Engineering, and Mathematics) fields and robotics among our team members and community. We aim to not only compete successfully in FTC events but also to learn and grow as individuals and as a team, using the FIRST Core Values.
 
